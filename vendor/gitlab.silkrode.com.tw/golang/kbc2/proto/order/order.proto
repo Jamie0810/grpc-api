@@ -1,0 +1,203 @@
+syntax = "proto3";
+package order;
+
+service Order {
+  // 建立主單
+  rpc CreateMainOrder(MainOrder) returns (MainOrder) {}
+  // 建立子單
+  rpc CreateSubOrder(SubOrder) returns (SubOrder) {}
+  // 建立歷史訂單
+  rpc CreateOrderHistory(OrderHistory) returns (OrderHistory) {}
+  // 更新主單
+  rpc UpdateMainOrder(MainOrder) returns (MainOrder) {}
+  // 更新子單
+  rpc UpdateSubOrder(SubOrder) returns (SubOrder) {}
+  // 查詢主單
+  rpc QueryMainOrder(TrackingNumber) returns (MainOrder) {}
+  // 查詢子單
+  rpc QuerySubOrder(SubTrackingNumber) returns (SubOrder) {}
+  // 查詢歷史訂單
+  rpc QueryOrderHistory(TrackingNumber) returns (OrderHistory) {}
+}
+
+message MainOrder {
+  // 訂單編號
+  string TrackingNumber = 1;
+  // 錢包預扣狀態
+  WalletStatus WalletStatus = 2;
+  // 交易方式
+  TransactionType TransactionType = 3;
+  // 支付流水號
+  string PaymentNumber = 4;
+  // 訂單類型 e.g.微信/支付寶/銀行卡
+  PaymentType PaymentType = 5;
+  // 打款帳戶
+  string DepositAccount = 6;
+  // 收款帳戶
+  string WithdrawAccount = 7;
+  // 訂單狀態
+  Status Status = 8;
+  // 玩家ID (KM)
+  string PlayerID = 9;
+  // 玩家姓名 (記錄用)
+  string UserName = 10;
+  // 設備ID (記錄用)
+  string DeviceID = 11;
+  // 設備IP (記錄用)
+  string DeviceIP = 12;
+  // 設備類型 (記錄用)
+  string DeviceType = 13;
+  // 電話號碼 (記錄用)
+  string Telephone = 14;
+  // 預計交易金額
+  double EstimatedCost = 15;
+  // 實際交易金額
+  double ActualCost = 16;
+  uint64 CompletedAt = 17;
+  uint64 DeletedAt = 18;
+  uint64 ExpiredAt = 19;
+  // -----customer 商戶-----
+  // 商戶ID
+  uint64 MerchantID = 20;
+  // 商戶姓名
+  string MerchantName = 21;
+  // 商戶訂單編號
+  string MerchantOrderNumber = 22;
+  // 商戶手續費
+  double MerchantFee = 23;
+  // 商戶費率選項 0: 未設定 1: 比率 2: 固定費率
+  MerchantRateType MerchantRateType = 24;
+  // 商戶費率比率 (KM)
+  double MerchantRate = 25;
+  // 商戶費率固定 (KM)
+  double MerchantRateFixed = 26;
+  // 商戶回調結果
+  MerchantResult MerchantResult = 27;
+  // 商戶回調網址
+  string MerchantNotifyURL = 28;
+  // -----商戶項目-----
+  // 商戶項目ID
+  uint64 MerchantProjectID= 29;
+  // 商戶項目名稱
+  string MerchantProjectName = 30;
+  // -----商戶產品-----
+  // 產品ID
+  uint64 MerchantProductID = 31;
+  // 產品名稱
+  string MerchantProductName = 32;
+  // -----商戶接口-----
+  // 商戶接口ID
+  uint64 MerchantProductAPIID = 33;
+  // 商戶接口名稱
+  string MerchantProductAPIName = 34;
+  // -----3rd party 支付渠道-----
+  // 3rd party 支付渠道
+  uint64 ChannelID = 35;
+  // 渠道code
+  string ChannelCode = 36;
+  // 渠道名稱
+  string ChannelName = 37;
+  // 渠道建單參數
+  bytes ChannelReq = 38;
+  // 渠道訂單編號
+  string ChannelOrderNumber = 39;
+  // 商戶原始
+  string ChannelMerchantID = 40;
+  // -----風控暫停-----
+  // 風控未通過原因
+  bytes BBReason = 41;
+  // 風控要跳過步驟
+  bytes BBSkip = 42;
+}
+
+
+message SubOrder {
+  // 訂單編號
+  string TrackingNumber = 1;
+  // 子訂單編號
+  string SubTrackingNumber = 2;
+  // 渠道ID
+  string ChannelID = 3;
+  // 渠道名稱
+  string ChannelName = 4;
+  // 商戶接口名稱
+  string MerchantProductAPIName = 5;
+  // 建立結果 e.g 成功 / 失敗
+  bool IsSuccess = 6;
+  // 錯誤訊息
+  string ResponseMessage = 7;
+  // 渠道建單參數
+  string ChannelReq = 8;
+  // 渠道回應結果
+  string ChannelResp = 9;
+}
+
+message OrderHistory {
+  // 訂單編號
+  string TrackingNumber = 1;
+  // 渠道名稱
+  string ChannelName = 2;
+  // 建立結果 e.g 成功 / 失敗
+  bool IsSuccess = 3;
+  // 錯誤訊息
+  string ResponseMessage = 4;
+}
+
+
+enum WalletStatus {
+  before = 0;
+  confirm = 1;
+  failed = 2;
+  unknow_wallet_status = 3;
+}
+
+enum TransactionType {
+  Deposit = 0;
+  Withdrawal = 1;
+  UNKNOW_TRANSACTIONTYPE = 2;
+}
+
+enum PaymentType {
+  ALIPAY = 0;
+  WECHAT = 1;
+  BANKCARD = 2;
+  UNKNOW_PAYMENTTYPE = 3;
+}
+
+enum Status {
+  // ToBeConfirmed 待確認
+  TBC = 0;
+	// Processing 處理中
+  PROCESSING = 1;
+	// Paused 風控暫停
+  PAUSED = 2;
+	// Succeed 交易成功
+  SUCCEED = 3;
+	// Failed 交易失敗
+  FAILED = 4;
+  UNKNOW_STATUS = 5;
+}
+
+enum MerchantRateType {
+  // 訂單費率比例
+  ratio = 0;
+  // 訂單費率固定
+  fixed = 1;
+  unknow_merchant_rateType= 2;
+}
+
+enum MerchantResult {
+  // 交易成功
+  MerchantResultSucceed = 0;
+  // 交易失敗
+  MerchantResultFailed = 1;
+  UnknowMerchantResult = 2;
+}
+
+message TrackingNumber{
+  string TrackingNumber = 1;
+}
+
+message SubTrackingNumber{
+  string SubTrackingNumber = 1;
+}

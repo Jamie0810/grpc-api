@@ -1,0 +1,27 @@
+env: dev
+stack_trace: true
+
+server:
+  grpc_port: 7070
+
+database:
+  driver: mysql
+  host: 10.1.1.111
+  port: 3307
+  ssl_mode: false
+  dbname: kbc2
+  user: test
+  password: test
+  log_mode: true
+  connect_timeout: 10s
+  # driver: mysql
+  # host: sit-kbc-mysql-tw-01.gcp.silkrode.com.tw
+  # port: 3306
+  # ssl_mode: false
+  # dbname: kbc2_captain_marvel
+  # user: sitkbc
+  # password: 9n#yz635%GntpMfy
+  # log_mode: true
+  # connect_timeout: 10s
+
+encrypto_key: W34RZJN6jzU0kXvw
